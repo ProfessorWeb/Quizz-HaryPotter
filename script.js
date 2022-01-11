@@ -46,6 +46,7 @@ class QuizzGame {
   }
 
   _ButtonHandler(e) {
+    console.log('asd');
     this.idLocal = this.id;
 
     if (+e.target.dataset.id !== this.idLocal || this.#score <= 0)
