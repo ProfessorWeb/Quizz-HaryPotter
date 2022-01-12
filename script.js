@@ -4,8 +4,10 @@ import harryPotterName from './NamesArray.js';
 
 /**Const */
 const btnAll = document.querySelectorAll('.btn');
+const resetBtn = document.querySelector('.reset');
 const divPicture = document.querySelector('.divPicture');
 const scoreDOM = document.querySelector('.score');
+const level = document.querySelector('.level');
 
 class QuizzGame {
   /*settings */
@@ -20,6 +22,7 @@ class QuizzGame {
   ];
 
   #score = 5;
+  #player = true;
 
   constructor() {
     this.arr = this.#randomNumArr[this._rand()]; // array Destructuring
@@ -32,7 +35,8 @@ class QuizzGame {
       btn.addEventListener('click', e => this._ButtonHandler(e));
     });
 
-    this._init();
+    this._init(); // init
+    resetBtn.addEventListener('click', this._reset.bind(this));
   }
 
   _rand() {
@@ -46,7 +50,6 @@ class QuizzGame {
   }
 
   _ButtonHandler(e) {
-    console.log('asd');
     this.idLocal = this.id;
 
     if (+e.target.dataset.id !== this.idLocal || this.#score <= 0)
@@ -56,21 +59,35 @@ class QuizzGame {
   }
 
   _incorrect() {
-    console.log('_incorrect');
-    scoreDOM.textContent = this.#score <= 0 ? 'you lose' : --this.#score;
+    if (this.#score >= 1) {
+      scoreDOM.textContent = --this.#score;
+      this._level(); // Update level
+      this._randInArr();
+      this._nextQuestion(); // next to the Question
+      this._showImg(); // render img
+    }
 
-    this._randInArr();
-    this._nextQuestion(); // next to the Question
-    this._showImg(); // render img
+    if (this.#score === 0) {
+      scoreDOM.textContent = 'you lose';
+      this.#player = false;
+    }
   }
 
   _correct() {
-    console.log('_correct');
-    scoreDOM.textContent = ++this.#score;
+    if (this.#player) {
+      scoreDOM.textContent = ++this.#score;
 
-    this._randInArr();
-    this._nextQuestion(); // next to the Question
-    this._showImg(); // render img
+      this._level(); // Update level
+      this._randInArr();
+      this._nextQuestion(); // next to the Question
+      this._showImg(); // render img
+    }
+  }
+
+  _level() {
+    if (this.#score >= 8) return (level.textContent = 'High');
+    if (this.#score >= 5) return (level.textContent = 'Normal');
+    if (this.#score <= 4) return (level.textContent = 'low');
   }
 
   _nextQuestion() {
@@ -90,6 +107,17 @@ class QuizzGame {
   _init() {
     scoreDOM.textContent = this.#score;
     this._showImg();
+  }
+
+  _reset() {
+    this.#player = true;
+    this.#score = 5;
+    scoreDOM.textContent = this.#score;
+
+    this._level(); // Update level
+    this._randInArr();
+    this._nextQuestion(); // next to the Question
+    this._showImg(); // render img
   }
 }
 
